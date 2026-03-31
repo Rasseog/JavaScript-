@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dice Probability Simulator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background: #f5f7fb;
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    button {
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Dice Probability Simulator</h1>
+
+<label>Number of dice:</label><br>
+<input type="number" id="dice" min="1"><br>
+
+<label>Target sum:</label><br>
+<input type="number" id="sum" min="1"><br>
+
+<button onclick="calculate()">Calculate Probability</button>
+
+<p id="result"></p>
+
+<script>
+function calculate() {
+  const diceCount = parseInt(document.getElementById("dice").value);
+  const targetSum = parseInt(document.getElementById("sum").value);
+
+  const repetitions = 10000;
+  let successCount = 0;
+
+  for (let i = 0; i < repetitions; i++) {
+    let sum = 0;
+
+    for (let j = 0; j < diceCount; j++) {
+      sum += Math.floor(Math.random() * 6) + 1;
+    }
+
+    if (sum === targetSum) {
+      successCount++;
+    }
+  }
+
+  const probability = (successCount / repetitions) * 100;
+
+  document.getElementById("result").textContent =
+    `Probability to get sum ${targetSum} with ${diceCount} dice is ${probability.toFixed(2)}%`;
+}
+</script>
+# gg
+</body>
+</html>
