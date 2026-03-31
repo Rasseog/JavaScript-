@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voting Program</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background: #f5f7fb;
+      color: #222;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .section {
+      margin-bottom: 25px;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input, button {
+      padding: 10px;
+      margin: 8px 0;
+      font-size: 16px;
+    }
+
+    input[type="number"],
+    input[type="text"] {
+      width: 300px;
+      max-width: 100%;
+      box-sizing: border-box;
+      display: block;
+    }
+
+    button {
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #eef2ff;
+      border-radius: 8px;
+      white-space: pre-line;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Voting Program</h1>
+
+  <div class="section">
+    <label for="candidateCount">Number of candidates:</label>
+    <input type="number" id="candidateCount" min="1">
+    <button id="createBtn">Create Candidates</button>
+  </div>
+
+  <div class="section">
+    <h2>Candidate Names</h2>
+    <div id="candidatesContainer"></div>
+  </div>
+
+  <div class="section">
+    <label for="voterCount">Number of voters:</label>
+    <input type="number" id="voterCount" min="1">
+    <button id="startBtn">Start Voting</button>
+  </div>
+
+  <div class="section">
+    <h2>Votes</h2>
+    <div id="votingContainer"></div>
+  </div>
+
+  <div class="section">
+    <button id="resultBtn">Show Results</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    let candidates = [];
+
+    document.getElementById("createBtn").addEventListener("click", createCandidates);
+    document.getElementById("startBtn").addEventListener("click", startVoting);
+    document.getElementById("resultBtn").addEventListener("click", calculateResults);
+
+    function createCandidates() {
+      const count = parseInt(document.getElementById("candidateCount").value);
+      const container = document.getElementById("candidatesContainer");
+      const votingContainer = document.getElementById("votingContainer");
+      const result = document.getElementById("result");
+
+      container.innerHTML = "";
+      votingContainer.innerHTML = "";
+      result.textContent = "";
+      candidates = [];
+
+      if (isNaN(count) || count < 1) {
+        alert("Please enter a valid number of candidates.");
+        return;
+      }
+
+      for (let i = 0; i < count; i++) {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.id = `candidate${i}`;
+        input.placeholder = `Candidate ${i + 1}`;
+        container.appendChild(input);
+      }
+    }
+
+    function startVoting() {
+      const count = parseInt(document.getElementById("candidateCount").value);
+      const voterCount = parseInt(document.getElementById("voterCount").value);
+      const container = document.getElementById("votingContainer");
+      const result = document.getElementById("result");
+
+      container.innerHTML = "";
+      result.textContent = "";
+      candidates = [];
+
+      if (isNaN(count) || count < 1) {
+        alert("Please enter a valid number of candidates and create them first.");
+        return;
+      }
+
+      for (let i = 0; i < count; i++) {
+        const input = document.getElementById(`candidate${i}`);
+
+        if (!input) {
+          alert("Please create candidates first.");
+          return;
+        }
+
+        const name = input.value.trim();
+
+        if (name === "") {
+          alert("Please fill in all candidate names.");
+          return;
+        }
+
+        candidates.push({
+          name: name,
+          votes: 0
+        });
+      }
+
+      if (isNaN(voterCount) || voterCount < 1) {
+        alert("Please enter a valid number of voters.");
+        return;
+      }
+
+      for (let i = 0; i < voterCount; i++) {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.className = "voteInput";
+        input.placeholder = `Voter ${i + 1} vote (candidate name or empty vote)`;
+        container.appendChild(input);
+      }
+    }
+
+    function calculateResults() {
+      const result = document.getElementById("result");
+      result.textContent = "";
+
+      if (candidates.length === 0) {
+        alert("Please create candidates and start voting first.");
+        return;
+      }
+
+      const voteInputs = document.querySelectorAll(".voteInput");
+
+      if (voteInputs.length === 0) {
+        alert("Please start voting first.");
+        return;
+      }
+
+      candidates.forEach(candidate => {
+        candidate.votes = 0;
+      });
+
+      voteInputs.forEach(input => {
+        const vote = input.value.trim();
+
+        if (vote === "") {
+          return;
+        }
+
+        const candidate = candidates.find(c => c.name.toLowerCase() === vote.toLowerCase());
+
+        if (candidate) {
+          candidate.votes++;
+        }
+      });
+
+      candidates.sort((a, b) => b.votes - a.votes);
+
+      let output = `The winner is ${candidates[0].name} with ${candidates[0].votes} votes.\n\nresults:\n`;
+
+      candidates.forEach(candidate => {
+        output += `${candidate.name}: ${candidate.votes} votes\n`;
+      });
+
+      result.textContent = output;
+
+      console.log(`The winner is ${candidates[0].name} with ${candidates[0].votes} votes.`);
+      console.log("results:");
+      candidates.forEach(candidate => {
+        console.log(`${candidate.name}: ${candidate.votes} votes`);
+      });
+    }
+  </script>
+
+</body>
+</html>
